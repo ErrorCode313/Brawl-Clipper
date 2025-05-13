@@ -46,7 +46,8 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
    # In streamingPC directory
    npm install
    ```
-3. You probably know what you're doing if you're doing this... Good Luck!
+3. Run the program with `npm start`
+4. You probably know what you're doing if you're doing this... Good Luck! Here's an extra clover: 🍀
 
 ## Setup and Configuration
 
