@@ -46,11 +46,11 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
 
 ## Setup and Configuration
 
-### Step 1: Configure Brawlhalla
+### Step 1: Configure Brawlhalla on secondary
 
 Add the `-writestats` launch option to Brawlhalla:
 
-1. On Steam: Right-click Brawlhalla > Properties > General > Launch Options
+1. On Steam in secondary PC: Right-click Brawlhalla > Properties > General > Launch Options
 2. Add `-writestats` and click OK
 
 ### Step 2: Configure OBS
@@ -61,7 +61,7 @@ Add the `-writestats` launch option to Brawlhalla:
    - Enable Authentication and generate a password (recommended)
    - Note the Server Port (default: 4455)
 
-2. Set up Replay Buffer:
+2. Set up Replay Buffer in OBS:
    - Settings > Output > Replay Buffer
    - Enable and configure Replay Buffer
    - Set the Maximum Replay Time (~7 seconds recommended)
@@ -69,13 +69,23 @@ Add the `-writestats` launch option to Brawlhalla:
 
 ### Step 3: Run Brawl Clipper
 
+### Dual PC setup (Recommended)
 #### On Secondary/Gaming PC:
 1. Run the secondaryPC application
+2. Have Brawlhalla running with `-writestats` launch option
 2. Enter your OBS WebSocket server details when prompted (OBS Tools > WebSocket Server Settings > Show Connect Info)
 
 #### On Streaming PC:
 1. Run the streamingPC application
 2. Enter your OBS WebSocket server details when prompted (OBS Tools > WebSocket Server Settings > Show Connect Info)
+3. Add the provided URL as a Browser Source in OBS:
+   - Add a Browser Source to your scene
+   - Enter the URL provided in the terminal (http://[LOCAL-IP]:3122)
+   - Set appropriate width/height for your scene
+
+### Single PC setup:
+1. Run Brawlhalla with `-writestats` launch option
+2. Start both the streamingPC application and the secondaryPC application
 3. Add the provided URL as a Browser Source in OBS:
    - Add a Browser Source to your scene
    - Enter the URL provided in the terminal (http://[LOCAL-IP]:3122)
