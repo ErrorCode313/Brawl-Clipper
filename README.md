@@ -49,6 +49,8 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
 
 ## Setup and Configuration
 
+**Note: the application stores your WebSocket connection settings locally for convenience in `stored.json`. DO NOT SHARE THIS FILE WITH ANYONE. This will be made more secure in the future 🙃**
+
 ### Step 1: Configure Brawlhalla on secondary
 
 Add the `-writestats` launch option to Brawlhalla:
