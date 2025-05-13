@@ -2,6 +2,11 @@ const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const FS = require("graceful-fs");
+
+// Helper function to get app root directory (works in both dev and pkg)
+const getAppRoot = () => {
+  return process.pkg ? path.dirname(process.execPath) : process.cwd();
+};
 let sendData = undefined;
 console.log("starting 1s");
 let liveData = undefined;
@@ -232,7 +237,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "web")));
+app.use(express.static(path.join(getAppRoot(), "web")));
 
 function start() {
   setInterval(() => {
@@ -249,7 +254,7 @@ app.get("/api/live", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "web", "index.html"));
+  res.sendFile(path.join(getAppRoot(), "web", "index.html"));
 });
 
 module.exports.app = app;

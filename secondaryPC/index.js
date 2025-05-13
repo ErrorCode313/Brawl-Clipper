@@ -2,16 +2,48 @@ const chokidar = require("chokidar");
 const FS = require("graceful-fs");
 const os = require("os");
 const path = require("path");
+const { exec } = require("child_process");
+
+function showErrorPopup(errorMessage) {
+  console.error(errorMessage); // Always log error to console
+
+  if (process.platform === "win32") {
+    // Windows: Use built-in PowerShell message box
+    exec(
+      `powershell -command "& {Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('${errorMessage.replace(
+        /'/g,
+        "''"
+      )}', 'Error', 0, 16)}"`
+    );
+  } else if (process.platform === "darwin") {
+    // macOS: Use AppleScript for a pop-up
+    exec(
+      `osascript -e 'display dialog "${errorMessage}" buttons {"OK"} with icon caution'`
+    );
+  } else {
+    // Linux: Use Zenity
+    exec(`zenity --error --text="${errorMessage}"`);
+  }
+}
+
+// Helper function to get app root directory (works in both dev and pkg)
+const getAppRoot = () => {
+  return process.pkg ? path.dirname(process.execPath) : process.cwd();
+};
 const inquirer = require("inquirer");
 const { default: OBSWebSocket } = require("obs-websocket-js");
-const args = process.argv.slice(2);
 let stats;
-if (args.length == 0 || args[0].includes("1")) {
-  stats = require("./stats.js");
-} else if (args[0].includes("2")) {
-  stats = require("./stats2.js");
-}
-const app = stats.app;
+let app;
+
+// Game mode selection question
+const gameModeQuestion = [
+  {
+    name: "gameMode",
+    type: "list",
+    message: "Which game mode would you like to run?",
+    choices: ["1v1s", "2v2s"]
+  }
+];
 
 let lastTime = null;
 let storedLength = 0;
@@ -24,7 +56,11 @@ let loadoutPath = path.join(
   "Loadouts.json"
 );
 const obs = new OBSWebSocket();
-const stored = require("./stored.json");
+
+// Get path to stored.json and create it if it doesn't exist
+const storedJsonPath = path.join(getAppRoot(), "stored.json");
+FS.existsSync(storedJsonPath) || FS.writeFileSync(storedJsonPath, "{}");
+const stored = JSON.parse(FS.readFileSync(storedJsonPath));
 const questions = [
   {
     name: "obsIp",
@@ -103,7 +139,28 @@ async function fileExists(filePath) {
   });
 }
 
+// Function to handle game mode selection
+async function selectGameMode() {
+  return new Promise((resolve) => {
+    inquirer.prompt(gameModeQuestion).then((answer) => {
+      if (answer.gameMode === "1v1s") {
+        console.log("Loading 1v1s mode...");
+        stats = require("./stats.js");
+      } else {
+        console.log("Loading 2v2s mode...");
+        stats = require("./stats2.js");
+      }
+      app = stats.app;
+      resolve();
+    });
+  });
+}
+
 async function init() {
+  // First, select the game mode
+  await selectGameMode();
+  
+  // Then check if the brawlPath exists
   let exist = FS.existsSync(brawlPath);
   if (!exist) {
     inquirer
@@ -156,7 +213,7 @@ function start() {
   inquirer.prompt(questions).then(
     async (answers) => {
       let { obsPassword, obsPort, obsIp, obsPrefix } = answers;
-      FS.writeFileSync("./stored.json", JSON.stringify(answers));
+      FS.writeFileSync(storedJsonPath, JSON.stringify(answers));
       console.log("pass: ", obsPassword);
       console.log("port: ", obsPort);
       let watcher = chokidar.watch(brawlPath, { persistent: true });
@@ -246,3 +303,16 @@ function waitForMain(obs) {
       });
   });
 }
+
+// Add error handling
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  showErrorPopup(`Uncaught Exception: ${err.message}`);
+  //process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Promise Rejection:", reason);
+  showErrorPopup(`Unhandled Promise Rejection: ${reason}`);
+  //process.exit(1);
+});

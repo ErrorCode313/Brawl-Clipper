@@ -1,21 +1,29 @@
 {
-  "name": "brawlhallaautoclip",
+  "name": "secondarypc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg ."
+  },
+  "pkg": {
+    "assets": [],
+    "targets": [
+      "node18-win-x64"
+    ]
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.3",
-    "brawlhallaautoclip": "file:",
     "chokidar": "^3.6.0",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "graceful-fs": "^4.2.11",
     "inquirer": "^8.0.0",
-    "obs-websocket-js": "^5.0.5"
+    "obs-websocket-js": "^5.0.5",
+    "secondarypc": "file:"
   }
 }
