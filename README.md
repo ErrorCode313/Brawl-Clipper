@@ -14,6 +14,7 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
 ## System Requirements
 
 **The secondary computer may only be used to spectate the game—you cannot play the match on it. Attempting to play from the secondary computer will cause it to not work properly.**
+**ONLY WORKS ON CUSTOM TOURNAMENT SETTING LOBBIES, NOT EXPERIMENTAL OR RANKED OR ANYTHING ELSE**
 
 - **OBS Studio** with WebSocket server enabled
 - **Brawlhalla** with `-writestats` launch option
