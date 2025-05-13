@@ -18,6 +18,7 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
 - **OBS Studio** with WebSocket server enabled
 - **Brawlhalla** with `-writestats` launch option
 - **Windows** operating system
+- **Linux & Mac may be supported, but aren't tested yet. Let me know how it works out!** You'll need to follow the [Option 2 installation method](#option-2-from-source)
 - **Dual PC Setup** (Recommended): 
   - While running on a single PC is possible, the `-writestats` feature could potentially crash the game and is not recommended by the developers for production use. A dual PC setup isolates this risk from your streaming environment.
   - The secondary computer should be spectating the game with a shorter or equal spectate delay (shorter is preferred).
