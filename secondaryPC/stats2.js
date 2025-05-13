@@ -2,6 +2,11 @@ const os = require("os");
 const fs = require("fs");
 const FS = require("graceful-fs");
 const express = require("express");
+
+// Helper function to get app root directory (works in both dev and pkg)
+const getAppRoot = () => {
+  return process.pkg ? path.dirname(process.execPath) : process.cwd();
+};
 console.log("starting 2s");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -232,7 +237,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "web2")));
+app.use(express.static(path.join(getAppRoot(), "web2")));
 
 // Set up interval to update data for each team
 function start() {
@@ -260,7 +265,7 @@ app.get("/team1/live", (req, res) => {
 
 // Default route for serving the web interface
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "web2", "index.html"));
+  res.sendFile(path.join(getAppRoot(), "web2", "index.html"));
 });
 
 module.exports = {
