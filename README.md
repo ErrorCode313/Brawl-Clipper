@@ -8,9 +8,12 @@ Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organ
 - **Real-time Stats Display** - Overlays match statistics on clips so viewers know exactly who got wrecked and how
 - **Local Web Interface** - Provides a browser source for OBS that's easier to set up than explaining to your friend why they lost
 - **Auto-Cleanup** - Automatically deletes clips at the start of new games (if only memories worked that way)
+- **Support for Both Tournament 1v1 Gamemodes and Tournament 2v2 Gamemodes** - Record every 1v1 ego boost and every 2v2 betrayal in crisp resolution.
 - **Dual PC Support** - Optimized for tournament streaming setups, because one PC just can't handle all that carnage
 
 ## System Requirements
+
+**The secondary computer may only be used to spectate the game—you cannot play the match on it. Attempting to play from the secondary computer will cause it to not work properly.**
 
 - **OBS Studio** with WebSocket server enabled
 - **Brawlhalla** with `-writestats` launch option
@@ -109,6 +112,7 @@ Any existing clips will be displayed on the web interface and will be automatica
 - **Stats Not Appearing**: Verify Brawlhalla is running with the `-writestats` option. Yes, you actually have to follow directions.
 - **Browser Source Not Working**: Check that the correct URL is being used. "Close enough" doesn't count with URLs.
 - **Viewing Error Messages**: If encountering issues, run the program through command prompt/terminal to see error messages before the window auto-closes. 
+- **The secondary computer may only be used to spectate the game—you cannot play the match on it. Attempting to play from the secondary computer will cause it to not work properly.**
 
 ## Attribution
 
