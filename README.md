@@ -2,6 +2,8 @@
 
 Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organizers that captures all death events and displays them with real-time stats. The system monitors Brawlhalla's built-in stats system for death events and automatically triggers OBS replay buffer recording, providing a seamless integration for capturing every KO during streams. Because in Brawlhalla, death is just another statistic worth collecting!
 
+https://github.com/user-attachments/assets/c8f7a9cb-e247-42b9-a022-fb7d9a341ab8
+
 ## Features
 
 - **Automatic Death Clips** - Records gameplay clips whenever anyone dies in Brawlhalla (RIP)
