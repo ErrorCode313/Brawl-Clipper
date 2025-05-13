@@ -18,6 +18,7 @@ BrawlhallaAutoClip is an automated tool for Brawlhalla streamers and tournament 
 - **Dual PC Setup** (Recommended): 
   - While running on a single PC is possible, the `-writestats` feature could potentially crash the game and is not recommended by the developers for production use. A dual PC setup isolates this risk from your streaming environment.
   - The secondary computer should be spectating the game with a shorter or equal spectate delay (shorter is preferred).
+- An internet connection, patience, this clover leaf 🍀 (recommended), and at least 4 gumballs (optional). 
 
 ## Installation
 
