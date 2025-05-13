@@ -42,6 +42,7 @@ BrawlhallaAutoClip is an automated tool for Brawlhalla streamers and tournament 
    # In streamingPC directory
    npm install
    ```
+3. You probably know what you're doing if you're doing this... Good Luck!
 
 ## Setup and Configuration
 
