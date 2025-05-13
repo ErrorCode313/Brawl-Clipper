@@ -1,0 +1,5 @@
+node_modules/
+*.bat
+*.exe
+stored.json
+*.zip
