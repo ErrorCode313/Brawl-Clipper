@@ -129,3 +129,5 @@ This project is dual-licensed:
 - **Images licenced by and "borrowed" from Blue Mammoth Games**
 
 Usage of the UI components requires maintaining the attribution to the original creator (@ErrorCode313).
+
+<sub><sup>[Donate? 👉👈](https://buymeacoffee.com/errorcode)</sup></sub>
