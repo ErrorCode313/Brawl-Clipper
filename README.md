@@ -102,7 +102,7 @@ Any existing clips will be displayed on the web interface and will be automatica
 
 ## Attribution
 
-Stats display and web interface created by [@ErrorCode313](https://github.com/ErrorCode313) - because someone had to do it, and that someone was me.
+Created by [@ErrorCode313](https://x.com/ErrorCode313) & Goblins from Grimblehook - because someone had to do it, and that someone was me (mostly).
 
 ## License
 
