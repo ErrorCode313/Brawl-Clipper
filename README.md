@@ -1,6 +1,6 @@
-# BrawlhallaAutoClip
+# Brawl Clipper
 
-BrawlhallaAutoClip is an automated tool for Brawlhalla streamers and tournament organizers that captures all death events and displays them with real-time stats. The system monitors Brawlhalla's built-in stats system for death events and automatically triggers OBS replay buffer recording, providing a seamless integration for capturing every KO during streams. Because in Brawlhalla, death is just another statistic worth collecting!
+Brawl Clipper is an automated tool for Brawlhalla streamers and tournament organizers that captures all death events and displays them with real-time stats. The system monitors Brawlhalla's built-in stats system for death events and automatically triggers OBS replay buffer recording, providing a seamless integration for capturing every KO during streams. Because in Brawlhalla, death is just another statistic worth collecting!
 
 ## Features
 
@@ -67,7 +67,7 @@ Add the `-writestats` launch option to Brawlhalla:
    - Set the Maximum Replay Time (~7 seconds recommended)
    - Set a replay buffer filename prefix (e.g., "Replay-")
 
-### Step 3: Run BrawlhallaAutoClip
+### Step 3: Run Brawl Clipper
 
 #### On Secondary/Gaming PC:
 1. Run the secondaryPC application
@@ -83,7 +83,7 @@ Add the `-writestats` launch option to Brawlhalla:
 
 ## Usage
 
-Once configured, BrawlhallaAutoClip will:
+Once configured, Brawl Clipper will:
 
 1. Connect to OBS on both computers using the WebSocket protocol
 2. Monitor Brawlhalla's death events through its stats system (it's basically a digital vulture)
