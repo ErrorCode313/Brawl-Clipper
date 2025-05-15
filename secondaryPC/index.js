@@ -108,22 +108,16 @@ async function readFileWithRetries(filePath, retries = 5, delay = 500) {
   throw new Error(`Failed to read file after ${retries} attempts`);
 }
 
-function getLocalIPAddress() {
-  const interfaces = os.networkInterfaces();
-  let localIP = null;
+const dgram = require("dgram");
+async function getLocalIPAddress() {
+  const socket = dgram.createSocket("udp4");
 
-  for (const interfaceName in interfaces) {
-    const addresses = interfaces[interfaceName];
+  return new Promise((resolve) => socket.connect(80, "8.8.8.8", () => {
+    const address = socket.address();
+    socket.close();
+    resolve(address.address); // This is the local IP in use
+  }));
 
-    for (const addressInfo of addresses) {
-      // We're only interested in IPv4 and non-internal (i.e., not `localhost`) addresses
-      if (addressInfo.family === "IPv4" && !addressInfo.internal) {
-        localIP = addressInfo.address;
-      }
-    }
-  }
-
-  return localIP;
 }
 
 async function fileExists(filePath) {
@@ -159,7 +153,7 @@ async function selectGameMode() {
 async function init() {
   // First, select the game mode
   await selectGameMode();
-  
+
   // Then check if the brawlPath exists
   let exist = FS.existsSync(brawlPath);
   if (!exist) {
@@ -227,10 +221,10 @@ function start() {
       await waitForMain(obs);
       console.log("Partner Program connected!");
       console.log("Program started, waiting for death...");
-
+      let localIp = await getLocalIPAddress();
       app.listen(3122, () => {
         console.log(
-          `Use http://${getLocalIPAddress()}:3122 on streaming computer as browser source to view stats`
+          `Use http://${localIp}:3122 on streaming computer as browser source to view stats`
         );
       });
       stats.start();
