@@ -61,11 +61,12 @@ function start() {
               name: "existClips",
               type: "list",
               message: "We've found existing clips. What would you like to do?",
-              choices: ["Delete them", "Keep them", "Exit the program"],
+              choices: ["Delete them (recommended)", "Keep them", "Exit the program"],
             },
           ]);
           switch (answers.existClips) {
-            case "Delete them":
+            case "Delete them (recommended)":
+              console.log("Deleting clips...");
               await clearClips();
               break;
             case "Keep them":
