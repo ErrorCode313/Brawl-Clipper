@@ -3,13 +3,10 @@ const path = require("path");
 const fs = require("fs");
 const FS = require("graceful-fs");
 
-// Helper function to get app root directory (works in both dev and pkg)
-const getAppRoot = () => {
-  return process.pkg ? path.dirname(process.execPath) : process.cwd();
-};
-let sendData = undefined;
+
+let sendData = { message: "default value" };
 console.log("starting 1s");
-let liveData = undefined;
+let liveData = { message: "default value" };
 function getMostRecentFile(directory) {
   const files = fs.readdirSync(directory);
 
@@ -72,6 +69,8 @@ async function main() {
   let loadoutData = JSON.parse(file3);
   let sum = 0;
   if (matchData.Teams == true) {
+    console.log (getMostRecentFile(dumpPath));
+    console.log("The latest stored match is a team match. Waiting for next one to start.");
     return;
   }
   liveData = loadoutData.Players.map(async (val) => {
@@ -228,22 +227,21 @@ async function main() {
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const exp = require("constants");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(getAppRoot(), "web")));
+app.use(express.static(path.join(__dirname, "web")));
 
-function start() {
-  setInterval(() => {
-    main();
-  }, 1000);
-}
+const baseDir = path.join(__dirname, "web");
+
+app.get("/", (req, res) => {
+  const indexPath = path.join(baseDir, "index.html");
+  const content = fs.readFileSync(indexPath, "utf8");
+  res.type("html").send(content);
+});
 
 app.get("/api/data", (req, res) => {
   res.send(sendData);
@@ -253,9 +251,11 @@ app.get("/api/live", (req, res) => {
   res.send(liveData);
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(getAppRoot(), "web", "index.html"));
-});
+function start() {
+  setInterval(() => {
+    main();
+  }, 1000);
+}
 
 module.exports.app = app;
 module.exports.main = main;
