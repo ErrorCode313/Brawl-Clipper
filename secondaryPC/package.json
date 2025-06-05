@@ -10,7 +10,12 @@
     "build": "pkg ."
   },
   "pkg": {
-    "assets": [],
+    "assets": [
+      "web",
+      "web/**/*",
+      "web2",
+      "web2/**/*"
+    ],
     "targets": [
       "node18-win-x64"
     ]

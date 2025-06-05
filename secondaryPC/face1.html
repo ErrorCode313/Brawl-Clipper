@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <body style="margin:0; background:transparent;">
+    <img id="face" style="width:100%; height:auto;" />
+    <script>
+      const apiUrl = 'http://192.168.1.181:3122/api/live';
+
+      async function updateFace() {
+        try {
+          const res = await fetch(apiUrl);
+          const json = await res.json();
+          const base64 = json[0].face;
+
+          if (!base64 || !base64.startsWith("iVBOR")) {
+            console.error("Invalid base64 PNG data.");
+            return;
+          }
+
+          const img = document.getElementById("face");
+          img.src = "data:image/png;base64," + base64;
+        } catch (err) {
+          console.error("Error loading face:", err);
+        }
+      }
+
+      updateFace();
+      setInterval(updateFace, 3000);
+    </script>
+  </body>
+</html>

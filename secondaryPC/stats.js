@@ -22,9 +22,20 @@ function getMostRecentFile(directory) {
     };
   });
 
+
   fileStats.sort((a, b) => b.mtime - a.mtime);
 
   return path.join(directory, fileStats[0].file);
+}
+
+
+function isFile(pathToCheck) {
+  try {
+    const stat = fs.statSync(pathToCheck);
+    return stat.isFile();
+  } catch (e) {
+    return false;
+  }
 }
 
 async function readFileWithRetries(filePath, retries = 5, delay = 500) {
@@ -32,6 +43,26 @@ async function readFileWithRetries(filePath, retries = 5, delay = 500) {
     try {
       // Try reading the file
       let data = FS.readFileSync(filePath, "utf8");
+      return data;
+    } catch (err) {
+      // If the file is busy or locked, retry after a delay
+      if (err.code === "EBUSY" || err.code === "EACCES") {
+        console.log(`File is busy, retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      } else {
+        // If it's another error, throw it
+        throw err;
+      }
+    }
+  }
+  throw new Error(`Failed to read file after ${retries} attempts`);
+}
+
+async function readFileWithRetriesBase64(filePath, retries = 5, delay = 500) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      // Try reading the file
+      let data = FS.readFileSync(filePath, "base64");
       return data;
     } catch (err) {
       // If the file is busy or locked, retry after a delay
@@ -57,32 +88,38 @@ const loadoutPath = path.join(
   os.homedir(),
   "BrawlhallaStatsLive",
   "Loadouts.json"
-); 
+);
 const rendersPath = path.join(os.homedir(), "BrawlhallaRenders");
 
 async function main() {
-  let file = await readFileWithRetries(getMostRecentFile(dumpPath)); 
+  let file = await readFileWithRetries(getMostRecentFile(dumpPath));
   let matchData = JSON.parse(file);
-  let file2 = await readFileWithRetries(deathsPath); 
+  let file2 = await readFileWithRetries(deathsPath);
   let file3 = await readFileWithRetries(loadoutPath);
   let deathData = JSON.parse(file2);
   let loadoutData = JSON.parse(file3);
   let sum = 0;
   if (matchData.Teams == true) {
-    console.log (getMostRecentFile(dumpPath));
+    console.log(getMostRecentFile(dumpPath));
     console.log("The latest stored match is a team match. Waiting for next one to start.");
     return;
   }
-  liveData = loadoutData.Players.map(async (val) => {
-    if (val.Loadout.FaceImageName != undefined) {
+  liveData = await Promise.all(loadoutData.Players.map(async (val) => {
+    if (val.Loadout.FaceImageName !== undefined) {
+      let faceImagePath = path.join(rendersPath, val.Loadout.FaceImageName);
+
+      if (!isFile(faceImagePath)) {
+        console.log(`Face image not found or is a directory: ${faceImagePath}`);
+        return null;
+      }
+
       return {
         name: val.PlayerName,
-        face: await readFileWithRetries(
-          path.join(rendersPath, val.Loadout.FaceImageName)
-        ),
+        face: await readFileWithRetriesBase64(faceImagePath),
       };
     }
-  });
+  }));
+
 
   let plr1Weapons = Object.entries(matchData.Player1)
     .filter(([string, val]) => {
@@ -144,18 +181,27 @@ async function main() {
       val.PlayerName == matchData.Player1.PlayerName
     );
   });
-  if (plr1data) {
-    if (plr1data.Loadout) {
-      let plr1Image = plr1data.Loadout.SkinImageName;
-      let plr1Face = plr1data.Loadout.FaceImageName;
-      imgUrl = fs.readFileSync(path.join(rendersPath, plr1Image), {
-        encoding: "base64",
-      });
-      imgUrl = `data:image/png;base64,${imgUrl}`;
-      faceUrl = fs.readFileSync(path.join(rendersPath, plr1Face), {
-        encoding: "base64",
-      });
-      faceUrl = `data:image/png;base64,${faceUrl}`;
+  if (plr1data && plr1data.Loadout) {
+    let plr1Image = plr1data.Loadout.SkinImageName;
+    let plr1Face = plr1data.Loadout.FaceImageName;
+    // console.log("Face: ", plr1Face);
+    // console.log("Image: ", plr1ImagePath);
+    let plr1ImagePath = path.join(rendersPath, plr1Image);
+    let plr1FacePath = path.join(rendersPath, plr1Face);
+
+    if (isFile(plr1ImagePath)) {
+      let imgData = fs.readFileSync(plr1ImagePath, { encoding: "base64" });
+      imgUrl = `data:image/png;base64,${imgData}`;
+
+    } else {
+      console.warn(`Image: ${plr1Image}, Face: ${plr1Face}, Image is missing or is not a file in Renders path.`);
+    }
+
+    if (isFile(plr1FacePath)) {
+      let faceData = fs.readFileSync(plr1FacePath, { encoding: "base64" });
+      faceUrl = `data:image/png;base64,${faceData}`;
+    } else {
+      console.warn(`Image: ${plr1Image}, Face: ${plr1Face}, Image is missing or is not a file in Renders path.`);
     }
   }
 
@@ -165,18 +211,25 @@ async function main() {
       val.PlayerName == matchData.Player2.PlayerName
     );
   });
-  if (plr2data) {
-    if (plr2data.Loadout) {
-      let plr2Image = plr2data.Loadout.SkinImageName;
-      imgUrl2 = fs.readFileSync(path.join(rendersPath, plr2Image), {
-        encoding: "base64",
-      });
-      imgUrl2 = `data:image/png;base64,${imgUrl2}`;
-      let plr2Face = plr2data.Loadout.FaceImageName;
-      faceUrl2 = fs.readFileSync(path.join(rendersPath, plr2Face), {
-        encoding: "base64",
-      });
-      faceUrl2 = `data:image/png;base64,${faceUrl2}`;
+  if (plr2data && plr2data.Loadout) {
+    let plr2Image = plr2data.Loadout.SkinImageName;
+    let plr2Face = plr2data.Loadout.FaceImageName;
+    let plr2ImagePath = path.join(rendersPath, plr2Image);
+    let plr2FacePath = path.join(rendersPath, plr2Face);
+    // console.log("Image: ", plr2Image);
+    // console.log("Face: ", plr2Face);
+    if (isFile(plr2ImagePath)) {
+      let imgData = fs.readFileSync(plr2ImagePath, { encoding: "base64" });
+      imgUrl2 = `data:image/png;base64,${imgData}`;
+    } else {
+      console.warn(`Image: ${plr2Image}, Face: ${plr2Face}, Image is missing or is not a file in Renders path.`);
+    }
+
+    if (isFile(plr2FacePath)) {
+      let faceData = fs.readFileSync(plr2FacePath, { encoding: "base64" });
+      faceUrl2 = `data:image/png;base64,${faceData}`;
+    } else {
+      console.warn(`Image: ${plr2Image}, Face: ${plr2Face}, Image is missing or is not a file in Renders path.`);
     }
   }
 
